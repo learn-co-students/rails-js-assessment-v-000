@@ -1,0 +1,32 @@
+<h2>Welcome to your Scratch Golfer Profile Page.</h2>
+
+<%= render "user_info" %>
+<br></br>
+<%= link_to "Check out the courses #{@user.name} has played.", user_courses_path(@user) %><br></br>
+<!-- <%= link_to "Take a look at all the rounds #{@user.name} has played.", user_rounds_path(@user) %><br></br> -->
+<a href="#" class="js-show" data-id="<%=@user.id%>">Show User's Rounds</a><br></br>
+
+<div class="roundsContainer"></div>
+
+<% if @user.id == session[:user_id] %>
+<%= link_to "Add a round to keep your handicap accurate", new_round_path %><br></br>
+<%= link_to "Edit your profile page", edit_user_path %>
+<% end %>
+
+<script type="text/javascript" charset="utf-8">
+$(function () {
+  $(".js-show").on("click", function() {
+    $.get("/users/" + $(".js-show").attr("data-id") + "/rounds.json", function(data) {
+      var rounds = ''
+      for (var i = 0; i < data.length; i++) {
+        rounds += `<div><strong>Round Number: ${i + 1}</strong></div><br>`
+        rounds += `<div>Course Name: ${data[i]["course"]["name"]}</div><br>`
+        rounds += `<div>Score: ${data[i]["score"]}</div><br>`
+        rounds += `<div>Putts: ${data[i]["putts"]}</div><br>`
+      }
+      $(".roundsContainer").append( rounds );
+    });
+    event.preventDefault();
+  });
+});
+</script>
